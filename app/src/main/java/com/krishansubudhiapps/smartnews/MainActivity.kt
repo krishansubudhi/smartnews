@@ -15,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.krishansubudhiapps.smartnews.ui.screens.NewsScreen
+import com.example.newsapp.ui.news.NewsScreen // Corrected import
 import com.krishansubudhiapps.smartnews.ui.theme.SmartNewsTheme
 
 class MainActivity : ComponentActivity() {
@@ -46,7 +46,7 @@ fun MainScreen() {
         NavHost(navController = navController, startDestination = Screen.Topics.route, modifier = Modifier.padding(innerPadding)) {
             composable(Screen.Topics.route) {
                 // NewsScreen will be the content for the Topics route
-                NewsScreen()
+                NewsScreen() // Using the new NewsScreen composable
             }
             composable(Screen.AddTopic.route) {
                 // Placeholder for Add Topic Screen
