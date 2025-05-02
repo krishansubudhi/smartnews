@@ -1,7 +1,7 @@
 package com.krishansubudhiapps.smartnews.di
 
-import com.example.newsapp.data.repository.NewsRepository // Corrected import
-import com.example.newsapp.ui.news.NewsViewModel // Corrected import
+import com.krishansubudhiapps.smartnews.data.repository.NewsRepository // Corrected import
+import com.krishansubudhiapps.smartnews.ui.news.NewsViewModel // Corrected import
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

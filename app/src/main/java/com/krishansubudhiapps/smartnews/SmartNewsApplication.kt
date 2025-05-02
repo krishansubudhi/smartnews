@@ -2,7 +2,7 @@ package com.krishansubudhiapps.smartnews
 
 import android.app.Application
 import com.krishansubudhiapps.smartnews.di.appModule
-import com.example.newsapp.di.networkModule
+import com.krishansubudhiapps.smartnews.di.networkModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 

@@ -1,8 +1,8 @@
-package com.example.newsapp.data.repository
+package com.krishansubudhiapps.smartnews.data.repository
 
 import android.util.Log // Import Log
-import com.example.newsapp.data.model.NewsApiResponse
-import com.example.newsapp.data.remote.NewsApiService
+import com.krishansubudhiapps.smartnews.data.model.NewsApiResponse
+import com.krishansubudhiapps.smartnews.data.remote.NewsApiService
 import com.krishansubudhiapps.smartnews.BuildConfig // Import BuildConfig
 
 class NewsRepository(private val newsApiService: NewsApiService) {

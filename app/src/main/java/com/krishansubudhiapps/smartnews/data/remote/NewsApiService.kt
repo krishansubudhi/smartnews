@@ -1,6 +1,6 @@
-package com.example.newsapp.data.remote
+package com.krishansubudhiapps.smartnews.data.remote
 
-import com.example.newsapp.data.model.NewsApiResponse
+import com.krishansubudhiapps.smartnews.data.model.NewsApiResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

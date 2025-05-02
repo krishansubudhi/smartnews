@@ -1,6 +1,6 @@
-package com.example.newsapp.di
+package com.krishansubudhiapps.smartnews.di
 
-import com.example.newsapp.data.remote.NewsApiService
+import com.krishansubudhiapps.smartnews.data.remote.NewsApiService
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
 import retrofit2.Retrofit

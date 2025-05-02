@@ -2,31 +2,34 @@ package com.krishansubudhiapps.smartnews.ui.news
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.krishansubudhiapps.smartnews.BuildConfig
-import com.krishansubudhiapps.smartnews.data.Article
-import com.krishansubudhiapps.smartnews.data.NewsRepository
+import com.krishansubudhiapps.smartnews.data.model.NewsArticle
+import com.krishansubudhiapps.smartnews.data.repository.NewsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
-    private val _articles = MutableStateFlow<List<Article>>(emptyList())
-    val articles: StateFlow<List<Article>> = _articles
+    private val _newsArticles = MutableStateFlow<List<NewsArticle>>(emptyList())
+    val newsArticles: StateFlow<List<NewsArticle>> = _newsArticles
 
-    // TODO: Manage API Key securely, e.g., using BuildConfig
-    private val apiKey = BuildConfig.NEWS_API_KEY
+    private val _isLoading = MutableStateFlow<Boolean>(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
-    init {
-        fetchNews()
-    }
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
 
-    fun fetchNews(country: String = "us") {
+    fun fetchNews(category: String? = null, query: String? = null) {
         viewModelScope.launch {
-            val response = newsRepository.getTopHeadlines(country, apiKey)
-            response?.articles?.let {
-                _articles.value = it
+            _isLoading.value = true
+            _errorMessage.value = null
+            val result = newsRepository.getNewsArticles(category, query)
+            result.onSuccess {
+                _newsArticles.value = it.articles
+            }.onFailure {
+                _errorMessage.value = it.message
             }
+            _isLoading.value = false
         }
     }
 }

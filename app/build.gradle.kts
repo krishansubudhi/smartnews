@@ -20,7 +20,7 @@ android {
 
     defaultConfig {
         applicationId = "com.krishansubudhiapps.smartnews"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -60,7 +60,9 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     // Retrofit
     implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
+    implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
+    implementation("com.squareup.moshi:moshi:1.15.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
