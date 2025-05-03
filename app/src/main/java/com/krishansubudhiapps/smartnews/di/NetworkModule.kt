@@ -4,9 +4,12 @@ import com.krishansubudhiapps.smartnews.network.NewsDataApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor // Import HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import com.krishansubudhiapps.smartnews.BuildConfig // Import BuildConfig
+
 
 val networkModule = module {
 
@@ -17,7 +20,15 @@ val networkModule = module {
 }
 
 fun provideOkHttpClient(): OkHttpClient {
+    // Create a logging interceptor
+    val loggingInterceptor = HttpLoggingInterceptor().apply {
+        // Set the level to BODY to log request and response headers and bodies
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+
     return OkHttpClient.Builder()
+        // Add the logging interceptor
+        .addInterceptor(loggingInterceptor)
         .build()
 }
 

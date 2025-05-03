@@ -12,11 +12,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.compose.composable // Ensure composable is imported
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.krishansubudhiapps.smartnews.ui.news.NewsScreen // Corrected import
+import com.krishansubudhiapps.smartnews.ui.news.NewsScreen
+import com.krishansubudhiapps.smartnews.ui.screens.TopicSelectionScreen // Import TopicSelectionScreen
 import com.krishansubudhiapps.smartnews.ui.theme.SmartNewsTheme
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,14 +45,12 @@ fun MainScreen() {
             BottomNavigationBar(navController = navController)
         }
     ) { innerPadding ->
-        NavHost(navController = navController, startDestination = Screen.Topics.route, modifier = Modifier.padding(innerPadding)) {
-            composable(Screen.Topics.route) {
-                // NewsScreen will be the content for the Topics route
-                NewsScreen() // Using the new NewsScreen composable
+        NavHost(navController = navController, startDestination = Screen.NewsFeed.route, modifier = Modifier.padding(innerPadding)) {
+            composable(Screen.NewsFeed.route) {
+                NewsScreen(navController = navController) // Pass navController to NewsScreen
             }
-            composable(Screen.AddTopic.route) {
-                // Placeholder for Add Topic Screen
-                AddTopicScreen()
+            composable(Screen.TopicSelection.route) {
+                TopicSelectionScreen(navController = navController) // Pass navController
             }
             composable(Screen.Search.route) {
                 // Placeholder for Search Screen
@@ -62,7 +62,8 @@ fun MainScreen() {
 
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
-    val items = listOf(Screen.Topics, Screen.AddTopic, Screen.Search)
+    // Updated list for bottom nav: NewsFeed, TopicSelection, Search
+    val items = listOf(Screen.NewsFeed, Screen.TopicSelection, Screen.Search) // Use NewsFeed and TopicSelection
     NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
@@ -72,15 +73,12 @@ fun BottomNavigationBar(navController: NavHostController) {
                 label = { Text(screen.label) },
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
-                    navController.navigate(screen.route) {
-                        // Avoid building up a large stack of destinations on the back stack as users select items
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+                    if (navController.currentDestination?.route != screen.route) { // Prevent navigating to the same destination
+                        navController.navigate(screen.route) {
+                            // Removed popUpTo and launchSingleTop for simpler navigation
+                            // Restore state when reselecting a previously selected item
+                            restoreState = true
                         }
-                        // Restore state when reselecting a previously selected item
-                        restoreState = true
-                        // Launch the singleTop flag to avoid multiple copies of the same destination when reselecting the same item
-                        launchSingleTop = true
                     }
                 }
             )
