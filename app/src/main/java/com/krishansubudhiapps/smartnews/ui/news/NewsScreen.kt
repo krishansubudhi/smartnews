@@ -35,6 +35,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import org.koin.androidx.compose.koinViewModel
 import java.time.ZonedDateTime
+import java.time.LocalDateTime // Import LocalDateTime
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -45,7 +46,8 @@ fun NewsScreen(viewModel: NewsViewModel = koinViewModel()) {
 
     LaunchedEffect(Unit) {
         // TODO: Implement topic selection logic later
-        viewModel.fetchNews(category = "technology") // Fetch technology news initially
+        // Fetch technology news from the US to test a simpler query
+        viewModel.fetchNews(category = "technology", country = "us")
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -118,24 +120,12 @@ fun NewsArticlePage(article: NewsArticle) {
 
         // Published At
         article.publishedAt?.let { publishedAt ->
-            val zonedDateTime = ZonedDateTime.parse(publishedAt)
-            val formattedDate = DateTimeFormatter.ofPattern("dd MMM yyyy hh:mm a", Locale.ENGLISH)
-                .format(zonedDateTime)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = formattedDate,
-                    fontSize = 12.sp,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = publishedAt,
+                fontSize = 12.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
 
         // Description
@@ -168,22 +158,36 @@ fun NewsArticlePage(article: NewsArticle) {
                 fontSize = 14.sp,
             )
         }
-        // Source
-        article.source?.name?.let { sourceName ->
+        // Source Link (using domain from URL)
+        article.url?.let { articleUrl ->
+            // Extract domain from URL
+            val domain = try {
+                val uri = Uri.parse(articleUrl)
+                uri.host ?: "Source Link" // Use host or default text
+            } catch (e: Exception) {
+                "Source Link" // Default text on error
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(article.url))
-                        context.startActivity(intent)
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(articleUrl))
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            // Handle cases where the URL is malformed or cannot be opened
+                            // You could show a Toast message to the user here
+                            println("Error opening URL: ${e.message}")
+                        }
                     },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Source: $sourceName",
+                    text = domain, // Display domain name
                     fontSize = 12.sp,
-                    color = Color.Blue,
+                    color = Color.Blue, // Keep blue color for link appearance
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(top = 4.dp)
                 )

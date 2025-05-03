@@ -1,16 +1,25 @@
-package com.krishansubudhiapps.smartnews.network
+package com.krishansubudhiapps.smartnews.data
 
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.krishansubudhiapps.smartnews.data.model.NewsDataResponse
+import com.krishansubudhiapps.smartnews.network.NewsDataApiService
+import com.krishansubudhiapps.smartnews.BuildConfig
 
-object RetrofitClient {
-    private const val BASE_URL = "https://newsapi.org/"
+class NewsRepository(private val newsDataApiService: NewsDataApiService) {
 
-    val newsApiService: NewsApiService by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(NewsApiService::class.java)
+    suspend fun getNewsArticles(category: String? = null, country: String? = null): Result<NewsDataResponse> {
+        return try {
+            val apiKey = BuildConfig.NEWS_API_KEY // Get API key from BuildConfig
+            if (apiKey.isEmpty()) {
+                return Result.failure(Exception("NewsData.io API key not found in local.properties"))
+            }
+            val response = newsDataApiService.getNews(apiKey = apiKey, category = category, country = country)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Error fetching news: ${response.code()} - ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

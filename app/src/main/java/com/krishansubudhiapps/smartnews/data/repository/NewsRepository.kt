@@ -1,28 +1,24 @@
 package com.krishansubudhiapps.smartnews.data.repository
 
-import android.util.Log // Import Log
-import com.krishansubudhiapps.smartnews.data.model.NewsApiResponse
-import com.krishansubudhiapps.smartnews.data.remote.NewsApiService
-import com.krishansubudhiapps.smartnews.BuildConfig // Import BuildConfig
+import com.krishansubudhiapps.smartnews.data.model.NewsDataResponse
+import com.krishansubudhiapps.smartnews.network.NewsDataApiService
+import com.krishansubudhiapps.smartnews.BuildConfig
 
-class NewsRepository(private val newsApiService: NewsApiService) {
+class NewsRepository(private val newsDataApiService: NewsDataApiService) {
 
-    // Get API key from BuildConfig
-    private val API_KEY = BuildConfig.NEWS_API_KEY
-
-    suspend fun getNewsArticles(category: String? = null, query: String? = null): Result<NewsApiResponse> {
-        // Log the API key being used for debugging
-        Log.d("NewsRepository", "Using API Key: $API_KEY")
-
+    suspend fun getNewsArticles(category: String? = null, country: String? = null): Result<NewsDataResponse> {
         return try {
-            val response = newsApiService.getTopHeadlines(
-                apiKey = API_KEY,
-                category = category,
-                query = query
-            )
-            Result.success(response)
+            val apiKey = BuildConfig.NEWS_API_KEY // Get API key from BuildConfig
+            if (apiKey.isEmpty()) {
+                return Result.failure(Exception("NewsData.io API key not found in local.properties"))
+            }
+            val response = newsDataApiService.getNews(apiKey = apiKey, category = category, country = country)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Error fetching news: ${response.code()} - ${response.message()}"))
+            }
         } catch (e: Exception) {
-            Log.e("NewsRepository", "Error fetching news", e) // Log errors
             Result.failure(e)
         }
     }

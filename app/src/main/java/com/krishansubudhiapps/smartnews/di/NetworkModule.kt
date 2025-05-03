@@ -1,16 +1,19 @@
 package com.krishansubudhiapps.smartnews.di
 
-import com.krishansubudhiapps.smartnews.data.remote.NewsApiService
+import com.krishansubudhiapps.smartnews.network.NewsDataApiService
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 val networkModule = module {
 
     single { provideOkHttpClient() }
-    single { provideRetrofit(get()) }
-    single { provideNewsApiService(get()) }
+    single { provideMoshi() }
+    single { provideRetrofit(get(), get()) }
+    single { provideNewsDataApiService(get()) }
 }
 
 fun provideOkHttpClient(): OkHttpClient {
@@ -18,15 +21,20 @@ fun provideOkHttpClient(): OkHttpClient {
         .build()
 }
 
-fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
-    // TODO: Replace with your News API base URL
-    return Retrofit.Builder()
-        .baseUrl("https://newsapi.org/v2/") // Example base URL
-        .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create())
+fun provideMoshi(): Moshi {
+    return Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
         .build()
 }
 
-fun provideNewsApiService(retrofit: Retrofit): NewsApiService {
-    return retrofit.create(NewsApiService::class.java)
+fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit {
+    return Retrofit.Builder()
+        .baseUrl("https://newsdata.io/api/1/") // NewsData.io base URL
+        .client(okHttpClient)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .build()
+}
+
+fun provideNewsDataApiService(retrofit: Retrofit): NewsDataApiService {
+    return retrofit.create(NewsDataApiService::class.java)
 }

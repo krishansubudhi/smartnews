@@ -28,8 +28,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Read API key from local.properties and expose it in BuildConfig
-        val newsApiKey = properties["newsApiKey"] as String? ?: ""
-        buildConfigField("String", "NEWS_API_KEY", "\"$newsApiKey\"")
+        val newsdataApiKey = properties["newsdataApiKey"] as String? ?: ""
+        buildConfigField("String", "NEWS_API_KEY", "\"$newsdataApiKey\"")
     }
 
     buildTypes {
